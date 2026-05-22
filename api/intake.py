@@ -5,12 +5,10 @@ POST /api/intake
 Receives intake form data → picks right plan → sends personalized HTML proposal email.
 
 Env vars (set in Vercel dashboard after deploy):
-  GMAIL_USER       = autoflowai.agency@gmail.com
-  GMAIL_PASS       = xxxx xxxx xxxx xxxx  (Gmail App Password, no spaces)
-  SENDER_NAME      = Alex
-  STRIPE_STARTER   = https://buy.stripe.com/xxxx   ($1,500/mo)
-  STRIPE_GROWTH    = https://buy.stripe.com/xxxx   ($2,500/mo)
-  STRIPE_SCALE     = https://buy.stripe.com/xxxx   ($4,500/mo)
+  GMAIL_USER    = heyautoflow02@gmail.com
+  GMAIL_PASS    = qbrynqtlmclabyyq
+  SENDER_NAME   = Harsh
+  PAYPAL_ME     = https://paypal.me/YOUR_HANDLE   (create at paypal.com/paypalme)
 """
 
 from http.server import BaseHTTPRequestHandler
@@ -21,12 +19,17 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 # ── ENV ───────────────────────────────────────────────────────────────────────
-GMAIL_USER    = os.environ.get("GMAIL_USER", "")
-GMAIL_PASS    = os.environ.get("GMAIL_PASS", "").replace(" ", "")
-SENDER_NAME   = os.environ.get("SENDER_NAME", "Alex")
-STRIPE_STARTER = os.environ.get("LS_STARTER") or os.environ.get("STRIPE_STARTER", "#")
-STRIPE_GROWTH  = os.environ.get("LS_GROWTH")  or os.environ.get("STRIPE_GROWTH", "#")
-STRIPE_SCALE   = os.environ.get("LS_SCALE")   or os.environ.get("STRIPE_SCALE", "#")
+GMAIL_USER  = os.environ.get("GMAIL_USER", "")
+GMAIL_PASS  = os.environ.get("GMAIL_PASS", "").replace(" ", "")
+SENDER_NAME = os.environ.get("SENDER_NAME", "Harsh")
+PAYPAL_ME   = os.environ.get("PAYPAL_ME", "")   # e.g. https://paypal.me/yourname
+
+def payment_link(amount: str) -> str:
+    """Returns PayPal.me link with amount pre-filled, or a reply CTA if not set."""
+    amt = amount.replace("$", "").replace(",", "").replace("/month", "").strip()
+    if PAYPAL_ME:
+        return f"{PAYPAL_ME.rstrip('/')}/{amt}USD"
+    return f"mailto:{GMAIL_USER}?subject=Ready to get started"
 
 # ── PLAN LOGIC ────────────────────────────────────────────────────────────────
 
@@ -36,7 +39,7 @@ def pick_plan(budget: str) -> dict:
         "1k_2k": {
             "name": "Starter",
             "price": "$1,500/month",
-            "stripe": STRIPE_STARTER,
+            "stripe": payment_link("1500"),
             "headline": "One core automation — deployed in 7 days",
             "includes": [
                 "1 custom AI automation workflow",
@@ -49,7 +52,7 @@ def pick_plan(budget: str) -> dict:
         "2k_5k": {
             "name": "Growth",
             "price": "$2,500/month",
-            "stripe": STRIPE_GROWTH,
+            "stripe": payment_link("2500"),
             "headline": "Full ops automation — reporting, content, client updates",
             "includes": [
                 "3 custom automation workflows",
@@ -63,7 +66,7 @@ def pick_plan(budget: str) -> dict:
         "5k_plus": {
             "name": "Scale",
             "price": "$4,500/month",
-            "stripe": STRIPE_SCALE,
+            "stripe": payment_link("4500"),
             "headline": "Full agency ops transformation — unlimited automations",
             "includes": [
                 "Unlimited automation workflows",
@@ -126,8 +129,10 @@ What's included:
 Setup time: 7 business days from payment.
 Guarantee: Save 10+ hours in 14 days or we work free until you do.
 
-Ready to start? Pay securely here:
+Ready to start? Pay via PayPal (takes 2 min):
 {plan['stripe']}
+
+Or just reply to this email and I'll send an invoice.
 
 Questions? Just reply to this email.
 
@@ -184,9 +189,9 @@ AutoFlow AI"""
         <div style="text-align:center;margin-bottom:32px;">
           <a href="{plan['stripe']}"
              style="display:inline-block;background:#6366f1;color:#ffffff;padding:16px 40px;border-radius:10px;font-size:16px;font-weight:700;text-decoration:none;letter-spacing:-0.2px;">
-            Pay securely &amp; get started →
+            Pay via PayPal &amp; get started →
           </a>
-          <div style="font-size:13px;color:#71717a;margin-top:12px;">Setup begins within 24 hours of payment.</div>
+          <div style="font-size:13px;color:#71717a;margin-top:12px;">Or reply to this email — I'll send an invoice directly.</div>
         </div>
 
         <hr style="border:none;border-top:1px solid #e4e4e7;margin-bottom:24px;">
