@@ -1,0 +1,2 @@
+# Vercel reads this to install Python dependencies for serverless functions
+# No external packages needed — uses only Python stdlib (smtplib, json, http.server)

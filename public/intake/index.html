@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Get Started — AutoFlow AI</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a0a; --bg2: #111111; --bg3: #1a1a1a;
+      --border: #222222; --accent: #6366f1; --accent-light: #818cf8;
+      --text: #f4f4f5; --muted: #71717a; --green: #22c55e; --red: #ef4444;
+    }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 20px 40px; border-bottom: 1px solid var(--border); }
+    .logo { font-size: 18px; font-weight: 700; }
+    .logo span { color: var(--accent); }
+    .back { color: var(--muted); text-decoration: none; font-size: 14px; }
+    .back:hover { color: var(--text); }
+
+    main { flex: 1; display: flex; align-items: flex-start; justify-content: center; padding: 60px 24px 80px; }
+
+    .card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 16px;
+      padding: 48px; width: 100%; max-width: 560px;
+    }
+
+    .step-indicator { display: flex; gap: 6px; margin-bottom: 36px; }
+    .step-dot { height: 4px; border-radius: 2px; background: var(--border); flex: 1; transition: background 0.3s; }
+    .step-dot.active { background: var(--accent); }
+    .step-dot.done   { background: var(--green); }
+
+    .step-screen { display: none; }
+    .step-screen.visible { display: block; }
+
+    .step-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-light); margin-bottom: 10px; }
+    h2 { font-size: 26px; font-weight: 800; letter-spacing: -0.8px; margin-bottom: 8px; }
+    .sub { font-size: 15px; color: var(--muted); margin-bottom: 32px; line-height: 1.5; }
+
+    label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.03em; }
+    input[type="text"], input[type="email"], select {
+      width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+      padding: 13px 16px; font-size: 15px; color: var(--text); outline: none;
+      transition: border-color 0.2s; margin-bottom: 20px;
+    }
+    input::placeholder { color: var(--muted); }
+    input:focus, select:focus { border-color: var(--accent); }
+    select option { background: var(--bg3); }
+
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 500px) { .field-row { grid-template-columns: 1fr; } }
+
+    /* Multi-select chips */
+    .chip-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+    .chip { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; font-size: 14px; cursor: pointer; transition: all 0.15s; user-select: none; }
+    .chip:hover { border-color: var(--accent); }
+    .chip.selected { background: rgba(99,102,241,0.12); border-color: var(--accent); color: var(--accent-light); }
+    .chip-hint { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+
+    /* Budget cards */
+    .budget-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+    .budget-card {
+      background: var(--bg3); border: 1px solid var(--border); border-radius: 10px;
+      padding: 16px; cursor: pointer; transition: all 0.15s; text-align: center;
+    }
+    .budget-card:hover { border-color: var(--accent); }
+    .budget-card.selected { background: rgba(99,102,241,0.12); border-color: var(--accent); }
+    .budget-card .amount { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+    .budget-card .desc   { font-size: 12px; color: var(--muted); }
+
+    /* Nav buttons */
+    .btn-row { display: flex; gap: 12px; justify-content: flex-end; margin-top: 8px; }
+    .btn-back { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+    .btn-back:hover { border-color: var(--muted); color: var(--text); }
+    .btn-next { background: var(--accent); color: #fff; border: none; padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+    .btn-next:hover { background: var(--accent-light); }
+    .btn-next:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Submit / loading / success */
+    .submit-btn {
+      width: 100%; background: var(--accent); color: #fff; border: none;
+      padding: 15px; border-radius: 10px; font-size: 16px; font-weight: 700;
+      cursor: pointer; transition: background 0.15s; margin-top: 8px;
+    }
+    .submit-btn:hover { background: var(--accent-light); }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .success-screen { text-align: center; padding: 20px 0; }
+    .success-icon { font-size: 56px; margin-bottom: 20px; }
+    .success-screen h2 { font-size: 28px; font-weight: 800; margin-bottom: 12px; }
+    .success-screen p { color: var(--muted); font-size: 16px; line-height: 1.6; }
+
+    .error-msg { color: var(--red); font-size: 13px; margin-top: -12px; margin-bottom: 16px; }
+
+    footer { padding: 24px 40px; border-top: 1px solid var(--border); text-align: center; }
+    footer p { font-size: 13px; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Auto<span>Flow</span> AI</div>
+  <a href="/" class="back">← Back</a>
+</nav>
+
+<main>
+  <div class="card" id="formCard">
+
+    <!-- Step indicator -->
+    <div class="step-indicator">
+      <div class="step-dot active" id="dot-1"></div>
+      <div class="step-dot" id="dot-2"></div>
+      <div class="step-dot" id="dot-3"></div>
+      <div class="step-dot" id="dot-4"></div>
+    </div>
+
+    <!-- Step 1: Name + Email -->
+    <div class="step-screen visible" id="step-1">
+      <div class="step-label">Step 1 of 4</div>
+      <h2>Let's start with you</h2>
+      <p class="sub">We'll send your custom proposal to this email within 10 minutes.</p>
+      <div class="field-row">
+        <div>
+          <label>First name</label>
+          <input type="text" id="first_name" placeholder="Alex" />
+        </div>
+        <div>
+          <label>Last name</label>
+          <input type="text" id="last_name" placeholder="Chen" />
+        </div>
+      </div>
+      <label>Work email</label>
+      <input type="email" id="email" placeholder="alex@youragency.com" />
+      <div class="btn-row">
+        <button class="btn-next" onclick="nextStep(1)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Agency info -->
+    <div class="step-screen" id="step-2">
+      <div class="step-label">Step 2 of 4</div>
+      <h2>Tell us about your agency</h2>
+      <p class="sub">Helps us tailor the automation plan to your setup.</p>
+      <label>Agency name</label>
+      <input type="text" id="agency_name" placeholder="Spark Digital" />
+      <label>Website (optional)</label>
+      <input type="text" id="website" placeholder="sparkdigital.com" />
+      <label>Team size</label>
+      <select id="team_size">
+        <option value="">Select team size</option>
+        <option value="1-5">1–5 people</option>
+        <option value="6-15">6–15 people</option>
+        <option value="16-30">16–30 people</option>
+        <option value="30+">30+ people</option>
+      </select>
+      <div class="btn-row">
+        <button class="btn-back" onclick="prevStep(2)">Back</button>
+        <button class="btn-next" onclick="nextStep(2)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Pain points -->
+    <div class="step-screen" id="step-3">
+      <div class="step-label">Step 3 of 4</div>
+      <h2>Where are you losing the most time?</h2>
+      <p class="sub">Select all that apply.</p>
+      <p class="chip-hint">Select at least one:</p>
+      <div class="chip-grid">
+        <div class="chip" onclick="toggleChip(this)" data-value="client_reporting">📊 Client reporting</div>
+        <div class="chip" onclick="toggleChip(this)" data-value="content_briefs">✍️ Content briefs</div>
+        <div class="chip" onclick="toggleChip(this)" data-value="client_updates">📧 Client updates</div>
+        <div class="chip" onclick="toggleChip(this)" data-value="lead_tracking">🎯 Lead tracking</div>
+        <div class="chip" onclick="toggleChip(this)" data-value="invoicing">🧾 Invoicing</div>
+        <div class="chip" onclick="toggleChip(this)" data-value="internal_ops">⚙️ Internal ops</div>
+        <div class="chip" onclick="toggleChip(this)" data-value="onboarding">🚀 Client onboarding</div>
+        <div class="chip" onclick="toggleChip(this)" data-value="data_sync">🔄 Tool integrations</div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="prevStep(3)">Back</button>
+        <button class="btn-next" onclick="nextStep(3)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Budget -->
+    <div class="step-screen" id="step-4">
+      <div class="step-label">Step 4 of 4</div>
+      <h2>What's your monthly budget for this?</h2>
+      <p class="sub">We'll recommend the right plan. No upselling.</p>
+      <div class="budget-grid">
+        <div class="budget-card" onclick="selectBudget(this, 'under_1k')">
+          <div class="amount">Under $1K</div>
+          <div class="desc">Exploring options</div>
+        </div>
+        <div class="budget-card" onclick="selectBudget(this, '1k_2k')">
+          <div class="amount">$1K – $2K</div>
+          <div class="desc">Ready to start</div>
+        </div>
+        <div class="budget-card" onclick="selectBudget(this, '2k_5k')">
+          <div class="amount">$2K – $5K</div>
+          <div class="desc">Serious about scaling</div>
+        </div>
+        <div class="budget-card" onclick="selectBudget(this, '5k_plus')">
+          <div class="amount">$5K+</div>
+          <div class="desc">Full transformation</div>
+        </div>
+      </div>
+      <div id="submit-error" class="error-msg" style="display:none;"></div>
+      <button class="submit-btn" id="submitBtn" onclick="submitForm()">Send my free proposal →</button>
+    </div>
+
+    <!-- Success -->
+    <div class="step-screen" id="success">
+      <div class="success-screen">
+        <div class="success-icon">📬</div>
+        <h2>Your proposal is on its way</h2>
+        <p>We've sent a custom automation plan to <strong id="confirm-email"></strong>.<br><br>
+        It includes the exact workflows we'd build for your agency, the recommended plan, and a direct payment link.<br><br>
+        Expect it in <strong>under 10 minutes</strong>. Check your spam folder if it doesn't arrive.</p>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <p>AutoFlow AI · No spam, no pressure · <a href="mailto:hello@autoflowai.com" style="color:var(--muted)">hello@autoflowai.com</a></p>
+</footer>
+
+<script>
+  let currentStep = 1;
+  let selectedBudget = "";
+
+  function showStep(n) {
+    document.querySelectorAll(".step-screen").forEach(s => s.classList.remove("visible"));
+    document.getElementById("step-" + n)?.classList.add("visible");
+
+    // Update dots
+    for (let i = 1; i <= 4; i++) {
+      const dot = document.getElementById("dot-" + i);
+      if (!dot) continue;
+      dot.classList.remove("active", "done");
+      if (i < n) dot.classList.add("done");
+      else if (i === n) dot.classList.add("active");
+    }
+    currentStep = n;
+  }
+
+  function nextStep(from) {
+    if (from === 1) {
+      const fn = document.getElementById("first_name").value.trim();
+      const em = document.getElementById("email").value.trim();
+      if (!fn) { alert("Please enter your first name."); return; }
+      if (!em || !em.includes("@")) { alert("Please enter a valid email."); return; }
+    }
+    if (from === 2) {
+      const ag = document.getElementById("agency_name").value.trim();
+      const ts = document.getElementById("team_size").value;
+      if (!ag) { alert("Please enter your agency name."); return; }
+      if (!ts)  { alert("Please select your team size."); return; }
+    }
+    if (from === 3) {
+      const selected = document.querySelectorAll(".chip.selected");
+      if (selected.length === 0) { alert("Please select at least one pain point."); return; }
+    }
+    showStep(from + 1);
+  }
+
+  function prevStep(from) { showStep(from - 1); }
+
+  function toggleChip(el) {
+    el.classList.toggle("selected");
+  }
+
+  function selectBudget(el, val) {
+    document.querySelectorAll(".budget-card").forEach(c => c.classList.remove("selected"));
+    el.classList.add("selected");
+    selectedBudget = val;
+  }
+
+  async function submitForm() {
+    if (!selectedBudget) {
+      const err = document.getElementById("submit-error");
+      err.textContent = "Please select a budget range.";
+      err.style.display = "block";
+      return;
+    }
+
+    const pains = Array.from(document.querySelectorAll(".chip.selected")).map(c => c.dataset.value);
+    const payload = {
+      first_name:  document.getElementById("first_name").value.trim(),
+      last_name:   document.getElementById("last_name").value.trim(),
+      email:       document.getElementById("email").value.trim(),
+      agency_name: document.getElementById("agency_name").value.trim(),
+      website:     document.getElementById("website").value.trim(),
+      team_size:   document.getElementById("team_size").value,
+      pain_points: pains,
+      budget:      selectedBudget,
+    };
+
+    const btn = document.getElementById("submitBtn");
+    btn.disabled = true;
+    btn.textContent = "Sending...";
+
+    try {
+      const res = await fetch("/api/intake", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        document.getElementById("confirm-email").textContent = payload.email;
+        document.querySelectorAll(".step-screen").forEach(s => s.classList.remove("visible"));
+        document.getElementById("success").classList.add("visible");
+        document.querySelector(".step-indicator").style.display = "none";
+      } else {
+        throw new Error("Server error");
+      }
+    } catch (e) {
+      const err = document.getElementById("submit-error");
+      err.textContent = "Something went wrong. Please email us at hello@autoflowai.com";
+      err.style.display = "block";
+      btn.disabled = false;
+      btn.textContent = "Send my free proposal →";
+    }
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AutoFlow AI — AI Automations for Marketing Agencies</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0a;
+      --bg2: #111111;
+      --bg3: #1a1a1a;
+      --border: #222222;
+      --accent: #6366f1;
+      --accent-light: #818cf8;
+      --text: #f4f4f5;
+      --muted: #71717a;
+      --green: #22c55e;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+    }
+    .logo { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+    .logo span { color: var(--accent); }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--accent);
+      color: #fff !important;
+      padding: 8px 20px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 14px !important;
+      transition: background 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--accent-light) !important; }
+
+    /* HERO */
+    .hero {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 100px 24px 80px;
+      text-align: center;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(99,102,241,0.12);
+      color: var(--accent-light);
+      border: 1px solid rgba(99,102,241,0.3);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+    }
+    h1 {
+      font-size: clamp(36px, 6vw, 60px);
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1.1;
+      margin-bottom: 24px;
+    }
+    h1 em { color: var(--accent-light); font-style: normal; }
+    .hero p {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+    .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      padding: 14px 32px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+      display: inline-block;
+    }
+    .btn-primary:hover { background: var(--accent-light); transform: translateY(-1px); }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      padding: 14px 32px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      transition: border-color 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--muted); }
+
+    /* SOCIAL PROOF BAR */
+    .proof-bar {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      text-align: center;
+    }
+    .proof-bar p { color: var(--muted); font-size: 13px; }
+    .proof-bar strong { color: var(--text); }
+
+    /* PAIN SECTION */
+    .section { max-width: 1000px; margin: 0 auto; padding: 80px 24px; }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      margin-bottom: 16px;
+    }
+    h2 {
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+    .section > p {
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 560px;
+      margin-bottom: 48px;
+    }
+
+    .pain-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .pain-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .pain-card .icon { font-size: 22px; margin-bottom: 12px; }
+    .pain-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+    .pain-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* HOW IT WORKS */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+    }
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 24px;
+      padding: 32px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+    }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      width: 44px;
+      height: 44px;
+      background: rgba(99,102,241,0.12);
+      border: 1px solid rgba(99,102,241,0.3);
+      color: var(--accent-light);
+      font-weight: 800;
+      font-size: 16px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .step-content h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .step-content p { font-size: 15px; color: var(--muted); line-height: 1.6; }
+
+    /* DELIVERABLES */
+    .deliverables-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .deliverable {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .deliverable .dot {
+      width: 8px; height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* PRICING */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 48px;
+    }
+    .pricing-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      position: relative;
+    }
+    .pricing-card.featured {
+      border-color: var(--accent);
+      background: rgba(99,102,241,0.06);
+    }
+    .featured-badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 100px;
+    }
+    .plan-name { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+    .plan-price { font-size: 42px; font-weight: 800; letter-spacing: -2px; margin-bottom: 4px; }
+    .plan-price span { font-size: 16px; font-weight: 400; color: var(--muted); }
+    .plan-desc { font-size: 14px; color: var(--muted); margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+    .plan-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
+    .plan-features li { font-size: 14px; display: flex; gap: 10px; align-items: flex-start; }
+    .plan-features li::before { content: "✓"; color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .plan-btn {
+      display: block;
+      text-align: center;
+      padding: 13px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .plan-btn-outline {
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .plan-btn-outline:hover { border-color: var(--muted); }
+    .plan-btn-filled {
+      background: var(--accent);
+      color: #fff;
+    }
+    .plan-btn-filled:hover { background: var(--accent-light); }
+
+    /* GUARANTEE */
+    .guarantee {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+    .guarantee .icon { font-size: 40px; margin-bottom: 16px; }
+    .guarantee h3 { font-size: 22px; font-weight: 800; margin-bottom: 12px; }
+    .guarantee p { color: var(--muted); font-size: 15px; line-height: 1.7; }
+
+    /* OBJECTIONS */
+    .faq { display: flex; flex-direction: column; gap: 0; max-width: 680px; }
+    .faq-item { border-bottom: 1px solid var(--border); padding: 24px 0; }
+    .faq-item h3 { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+    .faq-item p { font-size: 15px; color: var(--muted); line-height: 1.7; }
+
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(99,102,241,0.05) 100%);
+      border-top: 1px solid rgba(99,102,241,0.2);
+      border-bottom: 1px solid rgba(99,102,241,0.2);
+      text-align: center;
+      padding: 80px 24px;
+    }
+    .cta-section h2 { max-width: 600px; margin: 0 auto 16px; }
+    .cta-section p { color: var(--muted); font-size: 16px; margin-bottom: 40px; }
+
+    /* FOOTER */
+    footer {
+      padding: 32px 40px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    footer p { font-size: 13px; color: var(--muted); }
+    footer a { color: var(--muted); text-decoration: none; font-size: 13px; }
+    footer a:hover { color: var(--text); }
+
+    @media (max-width: 600px) {
+      nav { padding: 16px 20px; }
+      .section { padding: 60px 20px; }
+      footer { padding: 24px 20px; }
+      .guarantee { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Auto<span>Flow</span> AI</div>
+  <div style="display:flex;gap:24px;align-items:center;">
+    <a href="#how-it-works">How it works</a>
+    <a href="#pricing">Pricing</a>
+    <a href="/intake" class="nav-cta">Get proposal →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">For Marketing Agencies</div>
+  <h1>Stop doing manually what <em>AI can do overnight</em></h1>
+  <p>We build custom AI automations that eliminate 20+ hours of repetitive agency work every week — reporting, content, client updates — fully done-for-you.</p>
+  <div class="hero-btns">
+    <a href="/intake" class="btn-primary">Get your free proposal →</a>
+    <a href="#how-it-works" class="btn-secondary">See how it works</a>
+  </div>
+</section>
+
+<!-- PROOF BAR -->
+<div class="proof-bar">
+  <p>Used by agencies managing <strong>$500K–$10M/year</strong> in client spend &nbsp;·&nbsp; Average time saved: <strong>24 hours/week</strong> &nbsp;·&nbsp; Setup in <strong>7 days or less</strong></p>
+</div>
+
+<!-- PAIN SECTION -->
+<section class="section">
+  <div class="section-label">The Problem</div>
+  <h2>Your agency is leaking 20+ hours a week on work that shouldn't exist</h2>
+  <p>Every hour your team spends on repetitive ops is an hour not spent closing clients or delivering results.</p>
+  <div class="pain-grid">
+    <div class="pain-card">
+      <div class="icon">📊</div>
+      <h3>Manual reporting</h3>
+      <p>Pulling data from 5 platforms, formatting it, emailing it — every week, every client. Hours burned, zero leverage.</p>
+    </div>
+    <div class="pain-card">
+      <div class="icon">✍️</div>
+      <h3>Content bottlenecks</h3>
+      <p>Writers waiting on briefs. Briefs waiting on research. Approvals taking days. The pipeline leaks everywhere.</p>
+    </div>
+    <div class="pain-card">
+      <div class="icon">📧</div>
+      <h3>Client update hell</h3>
+      <p>Weekly status emails, Slack pings, "where are we on X?" — you're managing communication more than work.</p>
+    </div>
+    <div class="pain-card">
+      <div class="icon">🔄</div>
+      <h3>Tool sprawl</h3>
+      <p>HubSpot, Notion, Slack, Google Sheets, ClickUp — nothing talks to anything. Your team fills the gaps manually.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how-it-works">
+  <div class="section-label">The Solution</div>
+  <h2>We map it, build it, and hand it off — in 7 days</h2>
+  <p>No SaaS to learn. No internal dev required. We deliver running automations.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Operations audit (Day 1)</h3>
+        <p>We spend 60 minutes mapping every repetitive task in your agency — tools used, time spent, people involved. We score each by automation potential and ROI.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Build & integrate (Days 2–6)</h3>
+        <p>We build your automation stack using AI, n8n, and your existing tools. Reporting pipelines, content workflows, client update systems — all wired together and tested.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Handoff & monitor (Day 7+)</h3>
+        <p>We walk you through the system, document everything, and stay on retainer to maintain, expand, and optimize as your agency grows.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- DELIVERABLES -->
+<section class="section">
+  <div class="section-label">What You Get</div>
+  <h2>Concrete deliverables, not consulting decks</h2>
+  <p style="margin-bottom:32px;">Everything we build is deployed, documented, and owned by you.</p>
+  <div class="deliverables-grid">
+    <div class="deliverable"><div class="dot"></div>Automated client reports</div>
+    <div class="deliverable"><div class="dot"></div>AI content brief generator</div>
+    <div class="deliverable"><div class="dot"></div>Client update bot</div>
+    <div class="deliverable"><div class="dot"></div>Lead pipeline automation</div>
+    <div class="deliverable"><div class="dot"></div>Invoice & contract triggers</div>
+    <div class="deliverable"><div class="dot"></div>Slack/email digest system</div>
+    <div class="deliverable"><div class="dot"></div>Cross-tool data sync</div>
+    <div class="deliverable"><div class="dot"></div>Custom AI workflows</div>
+    <div class="deliverable"><div class="dot"></div>Onboarding automation</div>
+    <div class="deliverable"><div class="dot"></div>Performance dashboards</div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- PRICING -->
+<section class="section" id="pricing">
+  <div class="section-label">Pricing</div>
+  <h2>Simple, flat-rate retainers</h2>
+  <p>No setup fees. Cancel anytime. Start seeing ROI in week one.</p>
+  <div class="pricing-grid">
+
+    <div class="pricing-card">
+      <div class="plan-name">Starter</div>
+      <div class="plan-price">$1,500<span>/mo</span></div>
+      <div class="plan-desc">One core automation. Perfect for agencies ready to test AI ops.</div>
+      <ul class="plan-features">
+        <li>1 custom automation workflow</li>
+        <li>7-day setup</li>
+        <li>Documentation & handoff</li>
+        <li>Email support</li>
+        <li>1 monthly optimization</li>
+      </ul>
+      <a href="/intake" class="plan-btn plan-btn-outline">Get proposal →</a>
+    </div>
+
+    <div class="pricing-card featured">
+      <div class="featured-badge">Most Popular</div>
+      <div class="plan-name">Growth</div>
+      <div class="plan-price">$2,500<span>/mo</span></div>
+      <div class="plan-desc">Full ops stack. Reporting + content + client comms — all automated.</div>
+      <ul class="plan-features">
+        <li>3 custom automation workflows</li>
+        <li>AI reporting pipeline</li>
+        <li>Content brief automation</li>
+        <li>Client update system</li>
+        <li>Priority support + Slack access</li>
+        <li>Bi-weekly optimization calls</li>
+      </ul>
+      <a href="/intake" class="plan-btn plan-btn-filled">Get proposal →</a>
+    </div>
+
+    <div class="pricing-card">
+      <div class="plan-name">Scale</div>
+      <div class="plan-price">$4,500<span>/mo</span></div>
+      <div class="plan-desc">Unlimited automations. Full AI transformation of your agency ops.</div>
+      <ul class="plan-features">
+        <li>Unlimited workflows</li>
+        <li>Dedicated automation engineer</li>
+        <li>Full ops audit & roadmap</li>
+        <li>Custom AI model fine-tuning</li>
+        <li>Weekly strategy calls</li>
+        <li>White-glove onboarding</li>
+      </ul>
+      <a href="/intake" class="plan-btn plan-btn-outline">Get proposal →</a>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- GUARANTEE -->
+<section class="section">
+  <div class="guarantee">
+    <div class="icon">🛡️</div>
+    <h3>14-day results guarantee</h3>
+    <p>If we don't save your team at least 10 hours in the first 14 days, we'll work for free until we do — or refund you in full. Zero risk to try.</p>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- OBJECTIONS -->
+<section class="section">
+  <div class="section-label">Common Questions</div>
+  <h2>Before you ask</h2>
+  <div class="faq">
+    <div class="faq-item">
+      <h3>Will this work with the tools we already use?</h3>
+      <p>Yes. We work with whatever stack you have — HubSpot, ClickUp, Notion, Google Workspace, Slack, Airtable, and 100+ others. We connect the dots between them.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Do we need a technical team on our end?</h3>
+      <p>No. We build, deploy, and maintain everything. We document it thoroughly so your team can understand it — but you won't need a developer to run it.</p>
+    </div>
+    <div class="faq-item">
+      <h3>How long does setup actually take?</h3>
+      <p>7 business days from the start of the audit to live workflows running in your stack. For Scale tier, 10–14 days for the full ops overhaul.</p>
+    </div>
+    <div class="faq-item">
+      <h3>What if we want to change things after launch?</h3>
+      <p>That's what the retainer is for. We optimize, expand, and adjust every month based on what's working and where new bottlenecks emerge.</p>
+    </div>
+    <div class="faq-item">
+      <h3>What makes this different from hiring someone internally?</h3>
+      <p>An automation engineer costs $80K–$120K/year — before benefits, management overhead, and ramp time. We deliver faster, specialize in AI+automation, and cost a fraction.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="book">
+  <div class="section-label">Get Started</div>
+  <h2>Get your custom automation proposal</h2>
+  <p>Fill out a 2-minute form. We'll send a personalized automation plan with exact workflows and a direct payment link — no calls, no pressure.</p>
+  <!-- REPLACE with your Calendly or Cal.com link -->
+  <a href="/intake" class="btn-primary" style="font-size:16px;padding:16px 40px;">
+    Get my free proposal →
+  </a>
+  <p style="margin-top:20px;font-size:13px;color:var(--muted);">2-minute form. Proposal delivered in under 10 minutes.</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">Auto<span>Flow</span> AI</div>
+  <p>© 2025 AutoFlow AI. All rights reserved.</p>
+  <div style="display:flex;gap:20px;">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="mailto:hello@autoflowai.com">hello@autoflowai.com</a>
+  </div>
+</footer>
+
+</body>
+</html>
